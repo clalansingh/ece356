@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Hospital Management Information System</h1>
-        <form action= "auth" method = "loginServlet">
+        <form action= "auth" method = "post">
 
             <tr>
                 <td>Enter your name :</td>

@@ -8,9 +8,17 @@
         <servlet-name>DeleteEmployeeServlet</servlet-name>
         <servlet-class>ece356.DeleteEmployeeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>auth</servlet-name>
+        <servlet-class>ece356.auth</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>QueryServlet</servlet-name>
         <url-pattern>/QueryServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>auth</servlet-name>
+        <url-pattern>/auth</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>AddEmployeeServlet</servlet-name>

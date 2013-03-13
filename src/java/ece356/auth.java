@@ -9,7 +9,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 /**
@@ -18,37 +21,46 @@ import org.jasypt.util.password.StrongPasswordEncryptor;
  */
 public class auth extends HttpServlet{
     
-    protected boolean verifyUser(String user, String pass) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-
-        StrongPasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
-
-        Connection conn = null;
-        String userName = "****";
-        String password = "****";
+    public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
+    public static final String nid = "cmlalans"; //for the purpose of using hospital_cmlalans as the db
+    public static String user = "";
+    public static String pwd = "";
+    
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ClassNotFoundException, SQLException {
+        user = request.getParameter("user");
+        pwd = request.getParameter("pass");
         String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
-        ResultSet rs = null;
+        
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection con = DriverManager.getConnection(url, user, pwd);
+        Statement stmt = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            conn = DriverManager.getConnection(url, userName, password);
-            System.out.println("Database connection established");
-
-            PreparedStatement stmt = null;
-
-            stmt = conn.prepareStatement("SELECT * FROM DB WHERE USER = ?");
-            stmt.setString(1, user);
-            rs = stmt.executeQuery();
-            if (!rs.next()) {
-                return false;
+            con.createStatement();
+            stmt = con.createStatement();
+            stmt.execute("USE hospital_cmlalans");
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+                request.getRequestDispatcher("Finance.jsp");
             }
-
-            if (passwordEncryptor.checkPassword(pass, rs.getString("Password"))) {
-                return true;
-            }
-            conn.close();
-        } catch (Exception e) {
         }
-        getServletContext().getRequestDispatcher("Finance.jsp");
-        return false;
+    }
+    
+    public static Connection getConnection()
+            throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection con = DriverManager.getConnection(url, user, pwd);
+        Statement stmt = null;
+        try {
+            con.createStatement();
+            stmt = con.createStatement();
+            stmt.execute("USE hospital_" + nid);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        return con;
     }
     
 }
