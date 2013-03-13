@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Hospital Management Information System</h1>
-        <form action= "auth" method = "post">
+        <form action= "AuthServlet" method = "post">
 
             <tr>
                 <td>Enter your name :</td>
@@ -30,7 +30,7 @@
         </form>
 
         <ul>
-        <li><a href="QueryServlet?qnum=1">List all employees</a></li>        
+        <li><a href="QueryServlet">List all employees</a></li>        
         <li><a href="QueryServlet?qnum=2">List all departments</a></li>        
         <li><a href="queryEmployee.jsp">Query employees</a></li>        
         <li><a href="AddEmployeeServlet">Add employee</a></li>

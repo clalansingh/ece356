@@ -26,71 +26,26 @@
         <h1>Success!</h1>
         <%
             if (employeeList != null) {
-        %>
-        <h1>Employee Data</h1>
-        <table border=1><tr><th>empID</th><th>empName</th><th>job</th><th>deptID</th><th>salary</th></tr>
-            <%
+                out.println("<h1>Employee Data</h1>");
+                out.println("<table border=1>");
+                out.println("<tr><th>empID</th><th>empName</th><th>job</th><th>deptID</th><th>salary</th></tr>");
                 for (Employee em : employeeList) {
-            %>
-            <tr>
-                <td><%= em.getEmpID()%></td>
-                <td><%= em.getEmpName()%></td>
-                <td><%= em.getJob()%></td>
-                <td><%= em.getDeptID()%></td>
-                <td><%= em.getSalary()%></td>
-            </tr>
-            <%
+                    out.println("<tr><td>");
+                    out.print(em.getEmpID());
+                    out.print("</td><td>");
+                    out.print(em.getEmpName());
+                    out.print("</td><td>");
+                    out.print(em.getJob());
+                    out.print("</td><td>");
+                    out.print(em.getDeptID());
+                    out.print("</td><td>");
+                    out.print(em.getSalary());
+                    out.println("</td></tr>");
                 }
-            %>
-        </table>
-        <%
-        } else if (departmentList != null) {
-        %>
-        <h1>Department Data</h1>
-        <table border=1><tr><th>deptID</th><th>deptName</th><th>location</th></tr>
-            <%
-                for (Department dep : departmentList) {
-            %>
-            <tr>
-                <td><%= dep.getDeptID()%></td>
-                <td><%= dep.getDeptName()%></td>
-                <td><%= dep.getLocation()%></td>
-            </tr>
-            <%
-                }
-            %>
-        </table>        
-        <%
-        } else if (employeeDepartmentList != null) {
-        %>
-        <h1>Employee-Department Data</h1>
-        <table border=1>
-            <tr>
-                <th>empID</th><th>empName</th><th>job</th><th>salary</th>
-                <th>deptID</th><th>deptName</th><th>location</th>
-            </tr>
-            <%
-                for (int i = 0; i < employeeDepartmentList.size(); i += 2) {
-                    Employee em = (Employee) employeeDepartmentList.get(i);
-                    Department dep = (Department) employeeDepartmentList.get(i + 1);
-            %>
-            <tr>
-                <td><%= em.getEmpID()%></td>
-                <td><%= em.getEmpName()%></td>
-                <td><%= em.getJob()%></td>                
-                <td><%= em.getSalary()%></td>
-                <td><%= dep.getDeptID()%></td>
-                <td><%= dep.getDeptName()%></td>
-                <td><%= dep.getLocation()%></td>
-            </tr>
-            <%
-                }
-            %>
-        </table>        
-        <%
+                out.println("</table>");
             }
         %>
         <p>
-            <a href="index.jsp">return to main page</a>
+            <a href="index.jsp">return to main page...</a>
     </body>
 </html>

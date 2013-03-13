@@ -24,14 +24,20 @@ import ece356.auth;
  */
 public class ProjectDBAO {
     
+    public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
+    public static final String nid = "jcmtang"; //for the purpose of using hospital_cmlalans as the db
+    public static String user = "";
+    public static String pwd = "";
+    public static int user_type;
+    
     public static ArrayList<Employee> query1()
             throws ClassNotFoundException, SQLException {
         Connection con = null;
         Statement stmt = null;
         ArrayList<Employee> ret = null;
-        if ((auth.user != "") && (auth.pwd != "")) {
+        if ((user != "") && (pwd != "")) {
             try {
-                con = auth.getConnection();
+                con = ProjectDBAO.getConnection();
                 stmt = con.createStatement();
                 ResultSet resultSet = stmt.executeQuery(
                         "SELECT * FROM Employee WHERE job = 'engineer' AND salary >= 10000;");
@@ -56,6 +62,30 @@ public class ProjectDBAO {
             }
         }
         return null;
+    }
+    
+    public static Connection getConnection()
+            throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection con = DriverManager.getConnection(url, user, pwd);
+        Statement stmt = null;
+        try {
+            con.createStatement();
+            stmt = con.createStatement();
+            stmt.execute("USE hospital_" + nid);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+        return con;
+    }
+    
+    public static int setUser(String username, String password) {
+        user = username;
+        pwd = password;
+        user_type = 1;
+        return user_type;
     }
     
 }

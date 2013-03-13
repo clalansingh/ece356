@@ -29,7 +29,6 @@ public class auth extends HttpServlet{
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ClassNotFoundException, SQLException {
         user = request.getParameter("user");
         pwd = request.getParameter("pass");
-        String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
         
         Class.forName("com.mysql.jdbc.Driver");
         Connection con = DriverManager.getConnection(url, user, pwd);

@@ -30,22 +30,11 @@ public class QueryServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String strQueryNum = request.getParameter("qnum");
-        int intQueryNum = Integer.parseInt(strQueryNum);
 
         String url;
         try {
-            if (intQueryNum == 1) {
-                ArrayList ret = Lab3DBAO.getEmployees();
+            ArrayList ret = ProjectDBAO.query1();
                 request.setAttribute("employeeList", ret);
-            } else if (intQueryNum == 2) {
-                ArrayList ret = Lab3DBAO.getDepartments();
-                request.setAttribute("departmentList", ret);
-            } else if (intQueryNum == 3) {
-                query3helper(request, response);
-            } else {
-                throw new RuntimeException("Invalid query number: " + intQueryNum);
-            }
             url = "/success.jsp";
         } catch (Exception e) {
             request.setAttribute("exception", e);
