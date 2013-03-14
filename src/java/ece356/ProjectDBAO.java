@@ -26,44 +26,10 @@ import java.util.Calendar;
 public class ProjectDBAO {
     
     public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
-    public static final String nid = "jcmtang"; //for the purpose of using hospital_cmlalans as the db
+    public static final String nid = "jcmtang"; 
     public static String user = "";
     public static String pwd = "";
     public static int user_type;
-    
-    public static ArrayList<Employee> query1()
-            throws ClassNotFoundException, SQLException {
-        Connection con = null;
-        Statement stmt = null;
-        ArrayList<Employee> ret = null;
-        if ((user != "") && (pwd != "")) {
-            try {
-                con = ProjectDBAO.getConnection();
-                stmt = con.createStatement();
-                ResultSet resultSet = stmt.executeQuery(
-                        "SELECT * FROM Employee WHERE job = 'engineer' AND salary >= 10000;");
-                ret = new ArrayList<Employee>();
-                while (resultSet.next()) {
-                    Employee e = new Employee(
-                            resultSet.getInt("empID"),
-                            resultSet.getString("empName"),
-                            resultSet.getString("job"),
-                            resultSet.getInt("deptID"),
-                            resultSet.getInt("salary"));
-                    ret.add(e);
-                }
-                return ret;
-            } finally {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            }
-        }
-        return null;
-    }
     
     public static Connection getConnection()
             throws ClassNotFoundException, SQLException {
@@ -101,7 +67,7 @@ public class ProjectDBAO {
             ResultSet resultSet = stmt.executeQuery("SELECT operation, count(operation) as count" +
                     " FROM Procedures WHERE procedureDate >= '" + year + "-" + month + "-" + "01'" +
                     " AND procedureDate <= '" + year + "-" + month + "-" + "31'" +
-                    " group by operation");
+                    " group by operation order by count desc");
             ret = new ArrayList<String>();
             while (resultSet.next()) {
                 String p = resultSet.getString("operation") + "," + resultSet.getInt("count");

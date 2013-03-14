@@ -25,9 +25,6 @@
             count[i] = p[1];
             i++;
         }
-        
-        //sort by descending order
-        //for (int j = 0; j < )
     %>
     
     <body>

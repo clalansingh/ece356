@@ -28,13 +28,5 @@
             </tr>
 
         </form>
-
-        <ul>
-        <li><a href="QueryServlet">List all employees</a></li>        
-        <li><a href="QueryServlet?qnum=2">List all departments</a></li>        
-        <li><a href="queryEmployee.jsp">Query employees</a></li>        
-        <li><a href="AddEmployeeServlet">Add employee</a></li>
-        <li><a href="DeleteEmployeeServlet">Delete employee</a></li>
-        </ul>
     </body>
 </html>
