@@ -5,6 +5,7 @@
 package ece356;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import ece356.auth;
+import java.util.Calendar;
 
 /**
  *
@@ -86,6 +87,36 @@ public class ProjectDBAO {
         pwd = password;
         user_type = 1;
         return user_type;
+    }
+    
+     public static ArrayList<String> getMonthlyProcedures(String month, String year)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+
+        ArrayList<String> ret = null;
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("SELECT operation, count(operation) as count" +
+                    " FROM Procedures WHERE procedureDate >= '" + year + "-" + month + "-" + "01'" +
+                    " AND procedureDate <= '" + year + "-" + month + "-" + "31'" +
+                    " group by operation");
+            ret = new ArrayList<String>();
+            while (resultSet.next()) {
+                String p = resultSet.getString("operation") + "," + resultSet.getInt("count");
+                ret.add(p);
+            }
+            
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
     }
     
 }

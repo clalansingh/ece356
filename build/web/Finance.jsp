@@ -13,5 +13,9 @@
     </head>
     <body>
         <h1>Finance</h1>
+        <ul>
+        <li><a href="monthlyProcedureSearch.jsp">Procedures performed each month</a></li>        
+        <li><a href="doctorProcedure">Procedures performed by each doctor</a></li>        
+        </ul>
     </body>
 </html>
