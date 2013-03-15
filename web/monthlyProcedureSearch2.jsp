@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Monthly Procedure Search per DOCTOR</title>
+        <title>Monthly Procedure Search per Doctor</title>
     </head>
     <body>
         <h1>Monthly Procedure Search per Doctor</h1>
