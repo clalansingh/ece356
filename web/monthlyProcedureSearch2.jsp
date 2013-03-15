@@ -1,6 +1,6 @@
 <%-- 
-    Document   : monthlyProcedureSearch
-    Created on : Mar 13, 2013, 9:09:23 PM
+    Document   : monthlyProcedureSearch2
+    Created on : Mar 14, 2013, 10:05:33 PM
     Author     : Brandon
 --%>
 
@@ -9,12 +9,12 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Monthly Procedure Search</title>
+        <title>Monthly Procedure Search per Doctor</title>
     </head>
     <body>
-        <h1>Monthly Procedure Search</h1>
+        <h1>Monthly Procedure Search per Doctor</h1>
         
-        <form method="post" action="FinanceQueries?qnum=1">
+        <form method="post" action="FinanceQueries?qnum=2">
             <p>       
                Select Month:
                 <select name="month">

@@ -1,18 +1,20 @@
 <%-- 
-    Document   : monthlyProcedures
-    Created on : Mar 13, 2013, 11:04:18 AM
+    Document   : allProcedures
+    Created on : Mar 14, 2013, 9:32:39 PM
     Author     : Brandon
 --%>
+
 <%@page import="java.util.ArrayList"%>
-<%@page import="ece356.Procedure"%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Monthly Procedures</title>
+        <title>All Hospital Procedures</title>
+    </head>
     
-    <%
+     <%
         ArrayList <String> ret = (ArrayList<String>)request.getAttribute("ret");
         String [] operation = new String [ret.size()];
         String [] count = new String [ret.size()];
@@ -28,10 +30,8 @@
     %>
     
     <body>
-        <h1>Monthly Procedures</h1>
-        <p><%out.print(request.getAttribute("month"));%>, <%out.print(request.getAttribute("year"));%></p>
-        
-        <%
+        <h1>All Hospital Procedures</h1>
+         <%
             if (ret != null) {
                 out.println("<table border=1>");
                 out.println("<tr><th>Operation</th><th>Count</th></tr>");
@@ -45,7 +45,7 @@
                 out.println("</table>");
             }
             else {
-                out.println("No procedures performed this month.");
+                out.println("No procedures have been performed.");
             }
         %>
         <p>
