@@ -4,7 +4,6 @@
     Author     : Brandon
 --%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="ece356.Procedure"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>

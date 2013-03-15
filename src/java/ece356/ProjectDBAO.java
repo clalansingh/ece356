@@ -59,8 +59,8 @@ public class ProjectDBAO {
             throws ClassNotFoundException, SQLException {
         Connection con = null;
         Statement stmt = null;
-
         ArrayList<String> ret = null;
+        
         try {
             con = getConnection();
             stmt = con.createStatement();
@@ -84,5 +84,64 @@ public class ProjectDBAO {
             }
         }
     }
+     
+      public static ArrayList<String> getMonthlyProceduresPerDoctor(String month, String year)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+        
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select lastName, operation, count(operation) as count" + 
+                    " from (Doctors natural join Administered), Procedures where treatmentID = procedureID" +
+                    //" and procedureDate >= '" + year + "-" + month + "-" + "01'" +
+                    //" and procedureDate <= '" + year + "-" + month + "-" + "31'" +
+                    " group by lastName,operation");
+            ret = new ArrayList<String>();
+            while (resultSet.next()) {
+                String p = resultSet.getString("lastName") + "," + resultSet.getString("operation") + 
+                        "," + resultSet.getInt("count");
+                ret.add(p);
+            }
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     
+     public static ArrayList<String> getProcedureCount()
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+        
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select operation, count(operation) " + 
+                    "as count from Procedures group by operation order by count desc;");
+            ret = new ArrayList<String>();
+            
+            while (resultSet.next()) {
+                String p = resultSet.getString("operation") + "," + resultSet.getInt("count");
+                ret.add(p);
+            }
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+     }
     
 }

@@ -14,8 +14,9 @@
     <body>
         <h1>Finance</h1>
         <ul>
-        <li><a href="monthlyProcedureSearch.jsp">Procedures performed each month</a></li>        
-        <li><a href="doctorProcedure">Procedures performed by each doctor</a></li>        
+        <li><a href="monthlyProcedureSearch.jsp">Procedures performed each month</a></li>
+        <li><a href="monthlyProcedureSearch2.jsp">Procedures performed each month per doctor</a></li> 
+        <li><a href="FinanceQueries?qnum=3">View total number of procedures</a></li>        
         </ul>
     </body>
 </html>

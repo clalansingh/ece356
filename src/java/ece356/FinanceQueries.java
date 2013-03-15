@@ -38,16 +38,36 @@ public class FinanceQueries extends HttpServlet {
         String strQueryNum = request.getParameter("qnum");
         int intQueryNum = Integer.parseInt(strQueryNum);
         String url;
+        ArrayList<String> ret;
+                
         try {
+            //count total procedures per month
             if (intQueryNum == 1) {
                 String month = request.getParameter("month");
                 String year = request.getParameter("year");
-                ArrayList<String> ret = ProjectDBAO.getMonthlyProcedures(month, year);
+                ret = ProjectDBAO.getMonthlyProcedures(month, year);
                 request.setAttribute("month", month);
                 request.setAttribute("year", year);
                 request.setAttribute("ret", ret);
                 url = "/monthlyProcedures.jsp";
-            } else {
+            }
+            //count procedures by each doctor per month
+            else if (intQueryNum == 2) {
+                String month = request.getParameter("month");
+                String year = request.getParameter("year");
+                ret = ProjectDBAO.getMonthlyProceduresPerDoctor(month, year);
+                request.setAttribute("month", month);
+                request.setAttribute("year", year);
+                request.setAttribute("ret", ret);
+                url = "/monthlyProcedures2.jsp";
+            }
+            //count all procedures
+            else if (intQueryNum == 3) {
+                ret = ProjectDBAO.getProcedureCount();
+                request.setAttribute("ret", ret);
+                url = "/allProcedures.jsp";
+            }
+            else {
                 throw new RuntimeException("Invalid query number: " + intQueryNum);
             }
         } catch (Exception e) {
