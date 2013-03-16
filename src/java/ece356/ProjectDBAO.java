@@ -46,20 +46,21 @@ public class ProjectDBAO {
         }
         return con;
     }
-    
+
     public static int setUser(String username, String password) {
         user = username;
         pwd = password;
-        user_type = 1;
+        user_type = 2;
         return user_type;
     }
     
+    //returns number of procedures performed in given month
      public static ArrayList<String> getMonthlyProcedures(String month, String year)
             throws ClassNotFoundException, SQLException {
         Connection con = null;
         Statement stmt = null;
         ArrayList<String> ret = null;
-        
+
         try {
             con = getConnection();
             stmt = con.createStatement();
@@ -72,7 +73,7 @@ public class ProjectDBAO {
                 String p = resultSet.getString("operation") + "," + resultSet.getInt("count");
                 ret.add(p);
             }
-            
+
             return ret;
         } finally {
             if (stmt != null) {
@@ -84,63 +85,128 @@ public class ProjectDBAO {
         }
     }
      
-      public static ArrayList<String> getMonthlyProceduresPerDoctor(String month, String year)
-            throws ClassNotFoundException, SQLException {
-        Connection con = null;
-        Statement stmt = null;
-        ArrayList<String> ret = null;
-        
-        try {
-            con = getConnection();
-            stmt = con.createStatement();
-            ResultSet resultSet = stmt.executeQuery("select lastName, operation, count(operation) as count" + 
-                    " from (Doctors natural join Administered), Procedures where treatmentID = procedureID" +
-                    //" and procedureDate >= '" + year + "-" + month + "-" + "01'" +
-                    //" and procedureDate <= '" + year + "-" + month + "-" + "31'" +
-                    " group by lastName,operation");
-            ret = new ArrayList<String>();
-            while (resultSet.next()) {
-                String p = resultSet.getString("lastName") + "," + resultSet.getString("operation") + 
-                        "," + resultSet.getInt("count");
-                ret.add(p);
-            }
-            return ret;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (con != null) {
-                con.close();
-            }
-        }
+    //returns number of procedures performed in given month by what doctor
+     public static ArrayList<String> getMonthlyProceduresPerDoctor(String month, String year)
+           throws ClassNotFoundException, SQLException {
+       Connection con = null;
+       Statement stmt = null;
+       ArrayList<String> ret = null;
+
+       try {
+           con = getConnection();
+           stmt = con.createStatement();
+           ResultSet resultSet = stmt.executeQuery("select lastName, operation, count(operation) as count" + 
+                   " from (Doctors as D natural join Administered), Procedures where treatmentID = procedureID" +
+                   " and procedureDate >= '" + year + "-" + month + "-" + "01'" +
+                   " and procedureDate <= '" + year + "-" + month + "-" + "31'" +
+                   " group by lastName,operation" +
+                   " order by (select count(operation) from (Doctors as d natural join Administered), Procedures" +
+                   " where treatmentID = procedureID" +
+                   " and procedureDate >= '" + year + "-" + month + "-" + "01'" +
+                   " and procedureDate <= '" + year + "-" + month + "-" + "31'" +
+                   "and d.doctorID = D.doctorID) desc");
+           ret = new ArrayList<String>();
+           while (resultSet.next()) {
+               String p = resultSet.getString("lastName") + "," + resultSet.getString("operation") + 
+                       "," + resultSet.getInt("count");
+               ret.add(p);
+           }
+           return ret;
+       } finally {
+           if (stmt != null) {
+               stmt.close();
+           }
+           if (con != null) {
+               con.close();
+           }
+       }
+    }
+
+    //returns number of all procedures performed (all time)
+    public static ArrayList<String> getProcedureCount()
+          throws ClassNotFoundException, SQLException {
+      Connection con = null;
+      Statement stmt = null;
+      ArrayList<String> ret = null;
+
+      try {
+          con = getConnection();
+          stmt = con.createStatement();
+          ResultSet resultSet = stmt.executeQuery("select operation, count(operation) " + 
+                  "as count from Procedures group by operation order by count desc;");
+          ret = new ArrayList<String>();
+
+          while (resultSet.next()) {
+              String p = resultSet.getString("operation") + "," + resultSet.getInt("count");
+              ret.add(p);
+          }
+          return ret;
+      } finally {
+          if (stmt != null) {
+              stmt.close();
+          }
+          if (con != null) {
+              con.close();
+          }
+      }
     }
      
-     public static ArrayList<String> getProcedureCount()
-            throws ClassNotFoundException, SQLException {
-        Connection con = null;
-        Statement stmt = null;
-        ArrayList<String> ret = null;
-        
-        try {
-            con = getConnection();
-            stmt = con.createStatement();
-            ResultSet resultSet = stmt.executeQuery("select operation, count(operation) " + 
-                    "as count from Procedures group by operation order by count desc;");
-            ret = new ArrayList<String>();
-            
-            while (resultSet.next()) {
-                String p = resultSet.getString("operation") + "," + resultSet.getInt("count");
-                ret.add(p);
-            }
-            return ret;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (con != null) {
-                con.close();
-            }
-        }
+    //returns list of doctors
+    public static ArrayList<String> getDoctors()
+         throws ClassNotFoundException, SQLException {
+     Connection con = null;
+     Statement stmt = null;
+     ArrayList<String> ret = null;
+
+     try {
+         con = getConnection();
+         stmt = con.createStatement();
+         ResultSet resultSet = stmt.executeQuery("select doctorID, firstName, lastName from Doctors");
+         ret = new ArrayList<String>();
+
+         while (resultSet.next()) {
+             String p = resultSet.getString("doctorID") + "," + resultSet.getString("firstName") +
+                     "," + resultSet.getString("lastName");
+             ret.add(p);
+         }
+         return ret;
+     } finally {
+         if (stmt != null) {
+             stmt.close();
+         }
+         if (con != null) {
+             con.close();
+         }
      }
+  }
+     //currently returns list of all patients; need to edit so only returns list of patients linked to doctor corresponding to staff member
+     public static ArrayList<String> getPatients()
+         throws ClassNotFoundException, SQLException {
+     Connection con = null;
+     Statement stmt = null;
+     ArrayList<String> ret = null;
+
+     try {
+         con = getConnection();
+         stmt = con.createStatement();
+         ResultSet resultSet = stmt.executeQuery("select patientID, firstName, lastName from Patients");
+         ret = new ArrayList<String>();
+
+         while (resultSet.next()) {
+             String p = resultSet.getString("patientID") + "," + resultSet.getString("firstName") +
+                     "," + resultSet.getString("lastName");
+             ret.add(p);
+         }
+         return ret;
+     } finally {
+         if (stmt != null) {
+             stmt.close();
+         }
+         if (con != null) {
+             con.close();
+         }
+     }
+  }
+       
     
 }

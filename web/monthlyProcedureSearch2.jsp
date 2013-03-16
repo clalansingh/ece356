@@ -32,7 +32,7 @@
                Select Year:
                 <select name="year">
                      <%
-                    String [] year = {"2009", "2010", "2011", "2012", "2013"};
+                    String [] year = {"2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013"};
 
                     for (int i = 0; i < year.length; i++)
                     {

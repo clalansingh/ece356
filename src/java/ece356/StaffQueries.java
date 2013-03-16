@@ -6,22 +6,19 @@ package ece356;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author chrislalansingh
+ * @author Brandon
  */
-public class AuthServlet extends HttpServlet {
+@WebServlet(name = "StaffQueries", urlPatterns = {"/StaffQueries"})
+public class StaffQueries extends HttpServlet {
 
     /**
      * Processes requests for both HTTP
@@ -33,32 +30,36 @@ public class AuthServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-    public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
-    public static final String nid = "cmlalans"; //for the purpose of using hospital_cmlalans as the db
-    public static String user = "";
-    public static String pwd = "";
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
-        //user = request.getParameter("user");
-        //pwd = request.getParameter("pass");
-        //temporarily hardcoded user and password for testing (tired of typing ti in every time) 
-        user = "user_bdtheoba";
-        pwd = "user_bdtheoba";
-        int type = ProjectDBAO.setUser(user, pwd);
-        String redirect;
-        if (type == 1) {
-            redirect = "/Finance.jsp";
-        }
-        else if (type == 2) {
-            redirect = "/Staff.jsp";
-        } else {
-            redirect = "/index.jsp";
-        }
-        getServletContext().getRequestDispatcher(redirect).forward(request, response);
-    }
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        String strQueryNum = request.getParameter("qnum");
+        int intQueryNum = Integer.parseInt(strQueryNum);
+        String url = "";
+        ArrayList<String> ret;
 
+        try {
+            //add patient
+            if (intQueryNum == 1) {
+               url = "/index.jsp";
+            }
+            //update patient
+            else if (intQueryNum == 2) {
+                url = "/index.jsp";
+            }
+            //view patient
+            else if (intQueryNum == 3) {
+                url = "/index.jsp"; 
+            }
+            else {
+                throw new RuntimeException("Invalid query number: " + intQueryNum);
+            }
+        } catch (Exception e) {
+            request.setAttribute("exception", e);
+            url = "/fancyError.jsp";
+        }
+        getServletContext().getRequestDispatcher(url).forward(request, response);
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP
@@ -72,13 +73,7 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AuthServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(AuthServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -93,13 +88,7 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AuthServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(AuthServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
