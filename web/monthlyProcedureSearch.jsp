@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="ece356.ProjectDBAO"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -32,7 +33,11 @@
                Select Year:
                 <select name="year">
                      <%
-                    String [] year = {"2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013"};
+                    int [] yearLimits = ProjectDBAO.getYears();
+                    int [] year = new int[yearLimits[1] - yearLimits[0] + 1];
+                    for (int i = 0; i < year.length; i++) {
+                        year[i] = yearLimits[0] + i;
+                    }
 
                     for (int i = 0; i < year.length; i++)
                     {

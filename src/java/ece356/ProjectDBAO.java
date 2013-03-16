@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
 
 /**
  *
@@ -50,11 +49,43 @@ public class ProjectDBAO {
     public static int setUser(String username, String password) {
         user = username;
         pwd = password;
-        user_type = 2;
+        user_type = 1;
         return user_type;
     }
     
-    //returns number of procedures performed in given month
+    //returns array with max and min years
+     public static int [] getYears()
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        int [] ret = new int[2];
+        Date year;
+        String [] dateString;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select min(procedureDate) as min from Procedures");
+            resultSet.next();
+            dateString = resultSet.getDate("min").toString().split("-");
+            ret[0] = Integer.parseInt(dateString[0]);
+            resultSet = stmt.executeQuery("select max(procedureDate) as max from Procedures");
+            resultSet.next();
+            dateString = resultSet.getDate("max").toString().split("-");
+            ret[1] = Integer.parseInt(dateString[0]);
+
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    //returns array with max and min years
      public static ArrayList<String> getMonthlyProcedures(String month, String year)
             throws ClassNotFoundException, SQLException {
         Connection con = null;

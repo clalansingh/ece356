@@ -21,7 +21,7 @@
                 <select name="patientID">
                     <%!ArrayList<String> patientList;%>
                     <%
-                        patientList = (ArrayList<String>) ProjectDBAO.getPatients();
+                        patientList = ProjectDBAO.getPatients();
                         String [] patientNames = new String [patientList.size()];
                         String [] patientIDs = new String [patientList.size()];
                         int i = 0;

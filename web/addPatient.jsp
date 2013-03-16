@@ -29,7 +29,7 @@
                 <select name="doctorID">
                     <%!ArrayList<String> doctorList;%>
                     <%
-                         doctorList = (ArrayList<String>) ProjectDBAO.getDoctors();
+                        doctorList = ProjectDBAO.getDoctors();
                         String [] doctorNames = new String [doctorList.size()];
                         String [] doctorIDs = new String [doctorList.size()];
                         int i = 0;
