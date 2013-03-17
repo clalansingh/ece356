@@ -24,15 +24,16 @@ import javax.servlet.http.HttpServletResponse;
 public class ProjectDBAO {
     
     public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
-    public static final String nid = "jcmtang"; 
+    public static final String nid = "cmlalans"; 
     public static String user = "";
     public static String pwd = "";
-    public static int user_type;
+    public static String user_type;
+    public static boolean loggedIn = false;
     
     public static Connection getConnection()
             throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection(url, user, pwd);
+        Connection con = DriverManager.getConnection(url, "user_cmlalans", "user_cmlalans");
         Statement stmt = null;
         try {
             con.createStatement();
@@ -46,11 +47,24 @@ public class ProjectDBAO {
         return con;
     }
 
-    public static int setUser(String username, String password) {
+    public static String setUser(String username, String password) throws SQLException, ClassNotFoundException {
         user = username;
         pwd = password;
-        user_type = 1;
-        return user_type;
+        Connection con = getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet resultSet = stmt.executeQuery("select password, type from Users where username = \'"+user+"\'");
+        resultSet.next();
+        user_type = resultSet.getString("type");
+        int asciiSum = 0;
+        for (int i = 0; i < pwd.length(); i++) {
+            char c = pwd.charAt(i);
+            asciiSum += (int)c;
+        }
+        if (asciiSum == resultSet.getInt(password)) {
+            loggedIn = true;
+            return user_type;
+        }
+        return null;
     }
     
     //returns array with max and min years

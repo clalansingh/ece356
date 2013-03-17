@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -41,18 +42,25 @@ public class AuthServlet extends HttpServlet {
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
-        //user = request.getParameter("user");
-        //pwd = request.getParameter("pass");
+        user = request.getParameter("user");
+        pwd = request.getParameter("pass");
+        HttpSession session = request.getSession(true);
         //temporarily hardcoded user and password for testing (tired of typing ti in every time) 
-        user = "user_bdtheoba";
-        pwd = "user_bdtheoba";
-        int type = ProjectDBAO.setUser(user, pwd);
-        String redirect;
-        if (type == 1) {
-            redirect = "/Finance.jsp";
+//        user = "user_bdtheoba";
+//        pwd = "user_bdtheoba";
+        String type = ProjectDBAO.setUser(user, pwd);
+        if (!type.equals(null)) {
+            User newUser = new User();
+            newUser.createUser(user, type);
+            session.setAttribute("user", newUser);
         }
-        else if (type == 2) {
+        String redirect;
+        if (type.equals("finance")) {
+            redirect = "/Finance.jsp";
+        } else if (type.equals("staff")) {
             redirect = "/Staff.jsp";
+        } else if (type.equals("doctor")) {
+            redirect = "/index.jsp";
         } else {
             redirect = "/index.jsp";
         }
