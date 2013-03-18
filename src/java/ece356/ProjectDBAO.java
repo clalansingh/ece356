@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ProjectDBAO {
     
     public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";
-    public static final String nid = "jcmtang"; 
+    public static final String nid = "cmlalans"; 
     public static String user = "";
     public static String pwd = "";
     public static int user_type;
@@ -279,7 +279,7 @@ public class ProjectDBAO {
         }
     } 
    
-       public static ArrayList<String> queryVisitationRecords(int patientID, String date, int length, String diagnosis, String comments,
+       public static ArrayList<String> queryVisitationRecords(int doctorID, int patientID, String date, int length, String diagnosis, String comments,
                String firstName, String lastName, String operation, int referralID, String prescription, int searchType)
             throws ClassNotFoundException, SQLException {
         Connection con = null;
@@ -291,16 +291,19 @@ public class ProjectDBAO {
             String query = "";
             if(searchType == 1) {                
                 /* Build search based on operation */
-                query += "select * from Visits v, Patients p, VisitTreatment vt, Procedures pc " +
-                    "where v.patientID = p.patientID and p.patientID = vt.patientID and pc.procedureID = vt.treatmentID";  
+                query += "select * from Visits v, Patients p, DoctorAssignment da, VisitTreatment vt, Procedures pc" +
+                    " where da.doctorID =" + doctorID + " and da.patientID = v.patientID" + 
+                    " and v.patientID = p.patientID and p.patientID = vt.patientID and pc.procedureID = vt.treatmentID";  
             } else if (searchType == 2) {
                 /* Build search based on referral */
-                query += "select * from Visits v, Patients p, VisitTreatment vt, Referrals r " +
-                    "where v.patientID = p.patientID and p.patientID = vt.patientID and r.referralID = vt.treatmentID"; 
+                query += "select * from Visits v, Patients p, DoctorAssignment da, VisitTreatment vt, Referrals r" +
+                    " where da.doctorID =" + doctorID + " and da.patientID = v.patientID" + 
+                    " and v.patientID = p.patientID and p.patientID = vt.patientID and r.referralID = vt.treatmentID"; 
             } else {
                 /* Build search based on prescription */
-                query += "select * from Visits v, Patients p, VisitTreatment vt, Prescriptions pr " +
-                    "where v.patientID = p.patientID and p.patientID = vt.patientID and pr.prescriptionID = vt.treatmentID";  
+                query += "select * from Visits v, Patients p, DoctorAssignment da, VisitTreatment vt, Prescriptions pr" +
+                    " where da.doctorID =" + doctorID + " and da.patientID = v.patientID" + 
+                    " and v.patientID = p.patientID and p.patientID = vt.patientID and pr.prescriptionID = vt.treatmentID";  
             }
             
             if (patientID != -1) {
@@ -407,7 +410,7 @@ public class ProjectDBAO {
             con = getConnection();
 
             /* Build SQL query */
-            String query = "SELECT * FROM Visits WHERE TRUE";
+            String query = "SELECT * FROM Visits natural join Patients WHERE TRUE";
  
             query += " AND patientID = ?";
 
@@ -423,7 +426,8 @@ public class ProjectDBAO {
             while (resultSet.next()) {
                 String p = resultSet.getString("patientID") + "#" + resultSet.getString("visitDate") +
                      "#" + resultSet.getString("length")+ "#" + resultSet.getString("diagnosis") + 
-                     "#" + resultSet.getString("comments");
+                     "#" + resultSet.getString("firstName")+ "#" + resultSet.getString("lastName") + "#"
+                        + resultSet.getString("comments");
                 ret.add(p);
             }
             return ret;
@@ -564,6 +568,126 @@ public class ProjectDBAO {
             con = getConnection();
             stmt = con.createStatement();
             num = stmt.executeUpdate("INSERT INTO DoctorAssignment VALUES ("+doctorID+", "+patientID+");");
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static String getDoctorID(String userID)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select doctorID from Doctors where userID="+userID);
+            resultSet.next();
+            String doctorID = resultSet.getString("doctorID");        
+
+          
+            return doctorID;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static ArrayList<String> queryPrescriptionsForPatient(int patientID)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret;
+
+        try {
+            ret = new ArrayList<String>();
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select drug, dosage, v.visitDate from Visits v,VisitTreatment vt, Prescriptions pr" + 
+                    " where v.patientID =" + patientID + " AND v.patientID = vt.patientID and v.visitDate = vt.visitDate and vt.treatmentID = pr.prescriptionID";
+ 
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery(query);
+
+            ret = new ArrayList<String>();
+            while (resultSet.next()) {
+                String p = resultSet.getString("drug") + "#" + resultSet.getString("dosage") + "#" + resultSet.getString("visitDate");
+                ret.add(p);
+            }
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static ArrayList<String> queryProceduresForPatient(int patientID)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            /* Build SQL query */
+            String query = "select operation, v.visitDate from Visits v,VisitTreatment vt, Procedures pc" + 
+                    " where v.patientID =" + patientID + " AND v.patientID = vt.patientID and v.visitDate = vt.visitDate and vt.treatmentID = pc.procedureID";
+ 
+            ResultSet resultSet = stmt.executeQuery(query);
+
+            ret = new ArrayList<String>();
+            while (resultSet.next()) {
+                String p = resultSet.getString("operation") + "#" + resultSet.getString("visitDate");
+                ret.add(p);
+            }
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static ArrayList<String> queryReferralsForPatient(int patientID)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            /* Build SQL query */
+            String query = "select referralID, v.visitDate from Visits v,VisitTreatment vt, Referrals r" + 
+                    " where v.patientID =" + patientID + " AND v.patientID = vt.patientID and v.visitDate = vt.visitDate and vt.treatmentID = r.referralID";
+ 
+            ResultSet resultSet = stmt.executeQuery(query);
+
+            ret = new ArrayList<String>();
+            while (resultSet.next()) {
+                String p = resultSet.getString("referralID") + "#" + resultSet.getString("visitDate");
+                ret.add(p);
+            }
+            return ret;
         } finally {
             if (stmt != null) {
                 stmt.close();

@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -89,6 +90,7 @@ public class DoctorsQueries extends HttpServlet {
     protected void searchRecordsHelper(HttpServletRequest request, HttpServletResponse response)
             throws java.sql.SQLException, ClassNotFoundException {
             
+        HttpSession session = request.getSession(true);
         String strPatientID = request.getParameter("patientID");
         int patientID = -1;
         if (!strPatientID.equals("")) {
@@ -102,6 +104,13 @@ public class DoctorsQueries extends HttpServlet {
         if (!strLength.equals("")) {
             length = Integer.parseInt(strLength);
         }
+                
+        String strDoctorID = (String)session.getAttribute("doctorID");
+        int doctorID = -1;
+        if (!strDoctorID.equals("")) {
+            doctorID = Integer.parseInt(strDoctorID);
+        }
+        
         String diagnosis = request.getParameter("diagnosis"); 
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
@@ -123,7 +132,7 @@ public class DoctorsQueries extends HttpServlet {
         }
         
         String comments = request.getParameter("comments");
-        ArrayList ret = ProjectDBAO.queryVisitationRecords(patientID, date, length, diagnosis, comments, firstName, lastName, operation, referralID, prescription, searchType); 
+        ArrayList ret = ProjectDBAO.queryVisitationRecords(doctorID, patientID, date, length, diagnosis, comments, firstName, lastName, operation, referralID, prescription, searchType); 
         request.setAttribute("ret", ret);
             
     }

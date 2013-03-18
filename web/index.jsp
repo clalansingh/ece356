@@ -34,6 +34,7 @@
         <p>Welcome <%= user.getName() %></p>
         <a href="Finance.jsp">Finance</a>
         <a href="Staff.jsp">Staff</a>
+        <a href="Doctor.jsp">Doctor</a>
         <a href="LogoutServlet">Logout</a>
         <% } %>
     </body>
