@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Patient could not be created.</h1>
-        <p>Ensure that all fields are filled.</p>
+        <p>Please ensure that all fields are filled.</p>
         <a href="addPatient.jsp">Return to form.</a>
     </body>
 </html>

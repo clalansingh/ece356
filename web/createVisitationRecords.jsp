@@ -4,6 +4,8 @@
     Author     : Leon Zhang
 --%>
 <%@page import="java.util.ArrayList"%>
+<%@page import="ece356.ProjectDBAO"%>
+<%@page import="ece356.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -17,7 +19,28 @@
         <form method="post" action="DoctorsQueries?qnum=1">
             Enter visit data:
             <p>       
-                Patient ID: <input type="number" name="patientID" size="20" autofocus><br/>
+                Patient: <select name="patientID">
+                    <%!ArrayList<String> patientList;%>
+                    <%
+                        User user = (User)session.getAttribute("user");
+                        patientList = ProjectDBAO.getDoctorPatients(user.getID());
+                        String [] patientNames = new String [patientList.size()];
+                        String [] patientIDs = new String [patientList.size()];
+                        int i = 0;
+                        for (String d : patientList) {
+                            String [] s = d.split(",");
+                            patientIDs[i] = s[0];
+                            patientNames[i] = s[1] + " " + s[2];
+                            i++;
+                        }
+                        
+                        for (int j = 0; j < patientIDs.length; j++) {
+                    %>
+                    <option value="<%out.print(patientIDs[j]);%>"> <%out.print(patientNames[j]);%> </option>
+                    <%
+                        }
+                    %>
+                </select><br/>
                 Date: <input type="date" name="date" size="20"><br/> 
                 Length:<input type="number" name="length" size="20"><br/>
                 Diagnosis:<input type="text" name="diagnosis" size="20"><br/>

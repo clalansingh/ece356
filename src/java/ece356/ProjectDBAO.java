@@ -445,16 +445,29 @@ public class ProjectDBAO {
             String address, String phone, String doctorID) throws ClassNotFoundException, SQLException {
         Connection con = null;
         Statement stmt = null;
+        PreparedStatement pstmt = null;
         ArrayList<String> ret = null;
         int num = 0;
         try {
             con = getConnection();
             stmt = con.createStatement();
-            num = stmt.executeUpdate("INSERT INTO Patients VALUES (DEFAULT, "+health_card+", '"+firstName+"', '"+lastName+"', "+SIN+", '"+address+"', '"+phone+"');");
-            
+            pstmt = con.prepareStatement("INSERT INTO Patients VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)");
+            pstmt.setInt(1, Integer.parseInt(health_card));
+            pstmt.setString(2, firstName);
+            pstmt.setString(3, lastName);
+            pstmt.setInt(4, Integer.parseInt(SIN));
+            pstmt.setString(5, address);
+            pstmt.setString(6, phone);
+            num += pstmt.executeUpdate();
             if (!doctorID.equals("0")) {
-                ResultSet resultSet = stmt.executeQuery(
-                        "select patientID from Patients where health_card="+health_card+" AND firstName='"+firstName+"' AND lastName='"+lastName+"' AND SIN="+SIN+" AND address='"+address+"' AND phone='"+phone+"';");
+                pstmt = con.prepareStatement("select patientID from Patients where health_card=? AND firstName=? AND lastName=? AND SIN=? AND address=? AND phone=?");
+                pstmt.setInt(1, Integer.parseInt(health_card));
+                pstmt.setString(2, firstName);
+                pstmt.setString(3, lastName);
+                pstmt.setInt(4, Integer.parseInt(SIN));
+                pstmt.setString(5, address);
+                pstmt.setString(6, phone);
+                ResultSet resultSet = pstmt.executeQuery();
                 resultSet.next();
                 num += stmt.executeUpdate("INSERT INTO DoctorAssignment VALUES ("+doctorID+", "+resultSet.getString("patientID")+");");
             }
@@ -499,6 +512,7 @@ public class ProjectDBAO {
             String address, String phone) throws ClassNotFoundException, SQLException {
         Connection con = null;
         Statement stmt = null;
+        PreparedStatement pstmt = null;
         ArrayList<String> ret = null;
         int num = 0;
         System.out.println(patientID);
@@ -506,17 +520,35 @@ public class ProjectDBAO {
             con = getConnection();
             stmt = con.createStatement();
             if (!firstName.equals("")) {
-                num = stmt.executeUpdate("UPDATE Patients SET firstName='"+firstName+"' WHERE patientID="+patientID);
+                pstmt = con.prepareStatement("UPDATE Patients SET firstName=? WHERE patientID=?");
+                pstmt.setString(1, firstName);
+                pstmt.setInt(2, Integer.parseInt(patientID));
+                num = pstmt.executeUpdate();
             } if (!lastName.equals("")) {
-                num = stmt.executeUpdate("UPDATE Patients SET lastName='"+lastName+"' WHERE patientID="+patientID);
+                pstmt = con.prepareStatement("UPDATE Patients SET lastName=? WHERE patientID=?");
+                pstmt.setString(1, lastName);
+                pstmt.setInt(2, Integer.parseInt(patientID));
+                num = pstmt.executeUpdate();
             } if (!health_card.equals("")) {
-                num = stmt.executeUpdate("UPDATE Patients SET health_card="+health_card+" WHERE patientID="+patientID);
+                pstmt = con.prepareStatement("UPDATE Patients SET health_card=? WHERE patientID=?");
+                pstmt.setInt(1, Integer.parseInt(health_card));
+                pstmt.setInt(2, Integer.parseInt(patientID));
+                num = pstmt.executeUpdate();
             } if (!SIN.equals("")) {
-                num = stmt.executeUpdate("UPDATE Patients SET SIN="+SIN+" WHERE patientID="+patientID);
+                pstmt = con.prepareStatement("UPDATE Patients SET SIN=? WHERE patientID=?");
+                pstmt.setInt(1, Integer.parseInt(SIN));
+                pstmt.setInt(2, Integer.parseInt(patientID));
+                num = pstmt.executeUpdate();
             } if (!address.equals("")) {
-                num = stmt.executeUpdate("UPDATE Patients SET address='"+address+"' WHERE patientID="+patientID);
+                pstmt = con.prepareStatement("UPDATE Patients SET address=? WHERE patientID=?");
+                pstmt.setString(1, address);
+                pstmt.setInt(2, Integer.parseInt(patientID));
+                num = pstmt.executeUpdate();
             } if (!phone.equals("")) {
-                num = stmt.executeUpdate("UPDATE Patients SET phone='"+phone+"' WHERE patientID="+patientID);
+                pstmt = con.prepareStatement("UPDATE Patients SET phone=? WHERE patientID=?");
+                pstmt.setString(1, phone);
+                pstmt.setInt(2, Integer.parseInt(patientID));
+                num = pstmt.executeUpdate();
             }
         } finally {
             if (stmt != null) {
@@ -541,6 +573,37 @@ public class ProjectDBAO {
             resultSet.next();
             String staffID = resultSet.getString("staffID");
             resultSet = stmt.executeQuery("select patientID, firstName, lastName from Patients where patientID in (select distinct(patientID) from StaffAssignment natural join Doctors natural join DoctorAssignment where staffID="+staffID+")");
+            ret = new ArrayList<String>();
+
+            while (resultSet.next()) {
+                String p = resultSet.getString("patientID") + "," + resultSet.getString("firstName")
+                        + "," + resultSet.getString("lastName");
+                ret.add(p);
+            }
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static ArrayList<String> getDoctorPatients(String userID)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select doctorID from Doctors where userID="+userID);
+            resultSet.next();
+            String doctorID = resultSet.getString("doctorID");
+            resultSet = stmt.executeQuery("select patientID, firstName, lastName from Patients where patientID in (select distinct(patientID) from DoctorAssignment where doctorID="+doctorID+")");
             ret = new ArrayList<String>();
 
             while (resultSet.next()) {

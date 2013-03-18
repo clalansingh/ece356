@@ -14,5 +14,6 @@
     <body>
         <h1>Patient created successfully!</h1>
         <p><%= request.getAttribute("num") %> rows effected</p>
+        <a href="Staff.jsp">Return to Staff Tools.</a>
     </body>
 </html>
