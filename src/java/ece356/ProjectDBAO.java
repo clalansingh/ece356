@@ -697,4 +697,28 @@ public class ProjectDBAO {
             }
         }
     }
+    public static ArrayList<String> getPatientVisits(String patientID) throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+        try {
+            ret = new ArrayList<String>();
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select * from Visits where patientID="+patientID);
+            while (resultSet.next()) {
+                String p = resultSet.getString("visitDate") + "," + resultSet.getString("length")
+                        + "," + resultSet.getString("diagnosis") + "," + resultSet.getString("comments");
+                ret.add(p);
+            }
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
 }

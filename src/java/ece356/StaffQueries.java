@@ -99,6 +99,12 @@ public class StaffQueries extends HttpServlet {
                 String patientID = request.getParameter("patientID");
                 String doctorID = request.getParameter("doctorID");
                 ProjectDBAO.referral(patientID, doctorID);
+            } else if (intQueryNum == 6) {
+                String patientID = request.getParameter("patientID");
+                ArrayList<String> al = ProjectDBAO.getPatientVisits(patientID);
+                request.setAttribute("visits", al);
+                request.setAttribute("patientID", patientID);
+                url = "/viewSelectedVisits.jsp";
             }
             else {
                 throw new RuntimeException("Invalid query number: " + intQueryNum);
