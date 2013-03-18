@@ -6,6 +6,7 @@ package ece356;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,15 +42,63 @@ public class StaffQueries extends HttpServlet {
         try {
             //add patient
             if (intQueryNum == 1) {
-               url = "/index.jsp";
+                url = "/createPatientSuccess.jsp";
+                String firstName = request.getParameter("firstName");
+                String lastName = request.getParameter("lastName");
+                String health_card = request.getParameter("health_card");
+                String SIN = request.getParameter("SIN");
+                String address = request.getParameter("address");
+                String phone = request.getParameter("phone");
+                String doctorID = request.getParameter("doctorID");
+                int num = 0;
+                if ((!firstName.equals("")) && (!lastName.equals("")) && (!health_card.equals("")) && (!SIN.equals("")) && 
+                        (!address.equals("")) && (!phone.equals(""))) {
+                    num = ProjectDBAO.insertPatient(firstName, lastName, health_card, SIN, address, phone, doctorID);
+                } else {
+                    url = "/createPatientFailure.jsp";
+                }
+                request.setAttribute("num", num);
             }
             //update patient
             else if (intQueryNum == 2) {
-                url = "/index.jsp";
+                String patientID = request.getParameter("patientID");
+                ArrayList<String> al = ProjectDBAO.getPatient(patientID);
+                request.setAttribute("firstName", al.get(0));
+                request.setAttribute("lastName", al.get(1));
+                request.setAttribute("health_card", al.get(2));
+                request.setAttribute("SIN", al.get(3));
+                request.setAttribute("address", al.get(4));
+                request.setAttribute("phone", al.get(5));
+                request.setAttribute("patientID", patientID);
+                url = "/updatePatientForm.jsp";
             }
             //view patient
             else if (intQueryNum == 3) {
-                url = "/index.jsp"; 
+                String patientID = request.getParameter("patientID");
+                ArrayList<String> al = ProjectDBAO.getPatient(patientID);
+                request.setAttribute("firstName", al.get(0));
+                request.setAttribute("lastName", al.get(1));
+                request.setAttribute("health_card", al.get(2));
+                request.setAttribute("SIN", al.get(3));
+                request.setAttribute("address", al.get(4));
+                request.setAttribute("phone", al.get(5));
+                request.setAttribute("patientID", patientID);
+                url = "/viewSelectedPatient.jsp"; 
+            } else if (intQueryNum == 4) {
+                url = "/updatePatientSuccess.jsp";
+                String patientID = request.getParameter("patientID");
+                String firstName = request.getParameter("firstName");
+                String lastName = request.getParameter("lastName");
+                String health_card = request.getParameter("health_card");
+                String SIN = request.getParameter("SIN");
+                String address = request.getParameter("address");
+                String phone = request.getParameter("phone");
+                ProjectDBAO.updatePatient(patientID, firstName, lastName, health_card, SIN, address, phone);
+            } else if (intQueryNum == 5) {
+                url = "/patientReferralSuccess.jsp";
+                String patientID = request.getParameter("patientID");
+                String doctorID = request.getParameter("doctorID");
+                ProjectDBAO.referral(patientID, doctorID);
             }
             else {
                 throw new RuntimeException("Invalid query number: " + intQueryNum);

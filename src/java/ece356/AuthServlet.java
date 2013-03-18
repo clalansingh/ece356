@@ -10,12 +10,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -41,20 +43,31 @@ public class AuthServlet extends HttpServlet {
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
-        //user = request.getParameter("user");
-        //pwd = request.getParameter("pass");
+        user = request.getParameter("user");
+        pwd = request.getParameter("pass");
+        HttpSession session = request.getSession(true);
         //temporarily hardcoded user and password for testing (tired of typing ti in every time) 
-        user = "user_bdtheoba";
-        pwd = "user_bdtheoba";
-        int type = ProjectDBAO.setUser(user, pwd);
+//        user = "user_bdtheoba";
+//        pwd = "user_bdtheoba";
+        ArrayList<String> userdata = ProjectDBAO.setUser(user, pwd);
         String redirect;
-        if (type == 1) {
-            redirect = "/Finance.jsp";
-        }
-        else if (type == 2) {
-            redirect = "/Staff.jsp";
-        } else  if (type == 3) {
-            redirect = "/Doctor.jsp";
+        if (userdata != null) {
+            String type = userdata.get(0);
+            String userid = userdata.get(1);
+            if (!type.equals(null)) {
+                User newUser = new User();
+                newUser.createUser(user, type, userid);
+                session.setAttribute("user", newUser);
+            }
+            if (type.equals("finance")) {
+                redirect = "/Finance.jsp";
+            } else if (type.equals("staff")) {
+                redirect = "/Staff.jsp";
+            } else if (type.equals("doctor")) {
+                redirect = "/Doctor.jsp";
+            } else {
+                redirect = "/index.jsp";
+            }
         } else {
             redirect = "/index.jsp";
         }

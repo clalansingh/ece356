@@ -16,17 +16,17 @@
     <body>
         <h1>Add Patient</h1>
            <form method="post" action="StaffQueries?qnum=1">
-            Enter employee data:
+            Enter patient data:
             <p>       
-                Patient ID: <input type="text" name="patientID" size="20" autofocus><br/>
                 First Name: <input type="text" name="firstName" size="20"><br/> 
                 Last Name: <input type="text" name="lastName" size="20"><br/>
                 Health Card: <input type="text" name="health_card" size="11"><br/>
                 Social Insurance Number: <input type="text" name="SIN" size="11"><br/>
                 Address: <input type="text" name="address" size="50"><br/>
-                Phone Number: <input type="text" name="lastName" size="10"><br/> 
+                Phone Number: <input type="text" name="phone" size="10"><br/> 
                 Doctor:
                 <select name="doctorID">
+                    <option value="0"> N/A </option>
                     <%!ArrayList<String> doctorList;%>
                     <%
                         doctorList = ProjectDBAO.getDoctors();

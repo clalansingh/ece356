@@ -32,7 +32,7 @@ public class ProjectDBAO {
     public static Connection getConnection()
             throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection(url, user, pwd);
+        Connection con = DriverManager.getConnection(url, "user_cmlalans", "user_cmlalans");
         Statement stmt = null;
         try {
             con.createStatement();
@@ -46,11 +46,25 @@ public class ProjectDBAO {
         return con;
     }
 
-    public static int setUser(String username, String password) {
-        user = username;
-        pwd = password;
-        user_type = 3;
-        return user_type;
+    public static ArrayList<String> setUser(String username, String password) throws SQLException, ClassNotFoundException {
+        String user = username;
+        String pwd = password;
+        ArrayList<String> userdata = new ArrayList<String>();
+        Connection con = getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet resultSet = stmt.executeQuery("select userID, password, type from Users where username = \'" + user + "\'");
+        resultSet.next();
+        userdata.add(resultSet.getString("type"));
+        userdata.add(resultSet.getString("userID"));
+        int asciiSum = 0;
+        for (int i = 0; i < pwd.length(); i++) {
+            char c = pwd.charAt(i);
+            asciiSum += (int) c;
+        }
+        if (asciiSum == resultSet.getInt("password")) {
+            return userdata;
+        }
+        return null;
     }
     
     //returns array with max and min years
@@ -416,6 +430,143 @@ public class ProjectDBAO {
         } finally {
             if (pstmt != null) {
                 pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+	
+	public static int insertPatient(String firstName, String lastName, String health_card, String SIN,
+            String address, String phone, String doctorID) throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+        int num = 0;
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            num = stmt.executeUpdate("INSERT INTO Patients VALUES (DEFAULT, "+health_card+", '"+firstName+"', '"+lastName+"', "+SIN+", '"+address+"', '"+phone+"');");
+            
+            if (!doctorID.equals("0")) {
+                ResultSet resultSet = stmt.executeQuery(
+                        "select patientID from Patients where health_card="+health_card+" AND firstName='"+firstName+"' AND lastName='"+lastName+"' AND SIN="+SIN+" AND address='"+address+"' AND phone='"+phone+"';");
+                resultSet.next();
+                num += stmt.executeUpdate("INSERT INTO DoctorAssignment VALUES ("+doctorID+", "+resultSet.getString("patientID")+");");
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return num;
+    }
+    
+    public static ArrayList<String> getPatient(String patientID) throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = new ArrayList<String>();
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select * from Patients where patientID="+patientID);
+            resultSet.next();
+            ret.add(resultSet.getString("firstName"));
+            ret.add(resultSet.getString("lastName"));
+            ret.add(resultSet.getString("health_card"));
+            ret.add(resultSet.getString("SIN"));
+            ret.add(resultSet.getString("address"));
+            ret.add(resultSet.getString("phone"));
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static void updatePatient(String patientID, String firstName, String lastName, String health_card, String SIN,
+            String address, String phone) throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+        int num = 0;
+        System.out.println(patientID);
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            if (!firstName.equals("")) {
+                num = stmt.executeUpdate("UPDATE Patients SET firstName='"+firstName+"' WHERE patientID="+patientID);
+            } if (!lastName.equals("")) {
+                num = stmt.executeUpdate("UPDATE Patients SET lastName='"+lastName+"' WHERE patientID="+patientID);
+            } if (!health_card.equals("")) {
+                num = stmt.executeUpdate("UPDATE Patients SET health_card="+health_card+" WHERE patientID="+patientID);
+            } if (!SIN.equals("")) {
+                num = stmt.executeUpdate("UPDATE Patients SET SIN="+SIN+" WHERE patientID="+patientID);
+            } if (!address.equals("")) {
+                num = stmt.executeUpdate("UPDATE Patients SET address='"+address+"' WHERE patientID="+patientID);
+            } if (!phone.equals("")) {
+                num = stmt.executeUpdate("UPDATE Patients SET phone='"+phone+"' WHERE patientID="+patientID);
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static ArrayList<String> getStaffPatients(String userID)
+            throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            ResultSet resultSet = stmt.executeQuery("select staffID from Staff where userID="+userID);
+            resultSet.next();
+            String staffID = resultSet.getString("staffID");
+            resultSet = stmt.executeQuery("select patientID, firstName, lastName from Patients where patientID in (select distinct(patientID) from StaffAssignment natural join Doctors natural join DoctorAssignment where staffID="+staffID+")");
+            ret = new ArrayList<String>();
+
+            while (resultSet.next()) {
+                String p = resultSet.getString("patientID") + "," + resultSet.getString("firstName")
+                        + "," + resultSet.getString("lastName");
+                ret.add(p);
+            }
+            return ret;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
+    public static void referral(String patientID, String doctorID) throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        Statement stmt = null;
+        ArrayList<String> ret = null;
+        int num;
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
+            num = stmt.executeUpdate("INSERT INTO DoctorAssignment VALUES ("+doctorID+", "+patientID+");");
+        } finally {
+            if (stmt != null) {
+                stmt.close();
             }
             if (con != null) {
                 con.close();
