@@ -19,11 +19,15 @@
             <ul>
             <li><a href="addPatient.jsp">Add patient</a></li>
             <li><a href="updatePatient.jsp">Update patient</a></li> 
-            <li><a href="viewPatient.jsp">View patient</a></li>        
+            <li><a href="viewPatient.jsp">View patient</a></li> 
+            <li><a href="referral.jsp">Refer patient</a></li> 
             </ul>
+            <% } else { %>
+            <p>Only hospital staff members have access to this page.</p>
             <% } %>
         <% } else { %>
         <p>Please log in to access this page.</p>
         <% } %>
+        <a href="index.jsp">Home</a>
     </body>
 </html>

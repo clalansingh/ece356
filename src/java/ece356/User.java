@@ -11,10 +11,12 @@ package ece356;
 public class User {
     private String username;
     private String type;
+    private String userid;
     
-    public void createUser (String user, String user_type) {
+    public void createUser (String user, String user_type, String id) {
         username = user;
         type = user_type;
+        userid = id;
     }
     
     public String getName() {
@@ -23,5 +25,9 @@ public class User {
     
     public String getType() {
         return type;
+    }
+    
+    public String getID() {
+        return userid;
     }
 }

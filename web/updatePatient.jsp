@@ -5,6 +5,7 @@
 --%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="ece356.ProjectDBAO"%>
+<%@page import="ece356.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -21,7 +22,8 @@
                 <select name="patientID">
                     <%!ArrayList<String> patientList;%>
                     <%
-                        patientList = ProjectDBAO.getPatients();
+                        User user = (User)session.getAttribute("user");
+                        patientList = ProjectDBAO.getStaffPatients(user.getID());
                         String [] patientNames = new String [patientList.size()];
                         String [] patientIDs = new String [patientList.size()];
                         int i = 0;

@@ -32,6 +32,8 @@
         <% } else { %>
         <% User user = (User)session.getAttribute("user");%>
         <p>Welcome <%= user.getName() %></p>
+        <a href="Finance.jsp">Finance</a>
+        <a href="Staff.jsp">Staff</a>
         <a href="LogoutServlet">Logout</a>
         <% } %>
     </body>

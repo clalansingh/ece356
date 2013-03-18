@@ -27,5 +27,6 @@
         <% } else { %>
         <p>Please log in to access this page.</p>
         <% } %>
+        <a href="index.jsp">Home</a>
     </body>
 </html>

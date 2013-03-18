@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -48,10 +49,12 @@ public class AuthServlet extends HttpServlet {
         //temporarily hardcoded user and password for testing (tired of typing ti in every time) 
 //        user = "user_bdtheoba";
 //        pwd = "user_bdtheoba";
-        String type = ProjectDBAO.setUser(user, pwd);
+        ArrayList<String> userdata = ProjectDBAO.setUser(user, pwd);
+        String type = userdata.get(0);
+        String userid = userdata.get(1);
         if (!type.equals(null)) {
             User newUser = new User();
-            newUser.createUser(user, type);
+            newUser.createUser(user, type, userid);
             session.setAttribute("user", newUser);
         }
         String redirect;
