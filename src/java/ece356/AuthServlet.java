@@ -64,7 +64,7 @@ public class AuthServlet extends HttpServlet {
             } else if (type.equals("staff")) {
                 redirect = "/Staff.jsp";
             } else if (type.equals("doctor")) {
-                redirect = "/index.jsp";
+                redirect = "/Doctor.jsp";
             } else {
                 redirect = "/index.jsp";
             }

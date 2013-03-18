@@ -21,6 +21,7 @@
             <li><a href="updatePatient.jsp">Update patient</a></li> 
             <li><a href="viewPatient.jsp">View patient</a></li> 
             <li><a href="referral.jsp">Refer patient</a></li> 
+            <li><a href="viewVisits.jsp">View patient visits</a></li> 
             </ul>
             <% } else { %>
             <p>Only hospital staff members have access to this page.</p>
