@@ -50,20 +50,24 @@ public class AuthServlet extends HttpServlet {
 //        user = "user_bdtheoba";
 //        pwd = "user_bdtheoba";
         ArrayList<String> userdata = ProjectDBAO.setUser(user, pwd);
-        String type = userdata.get(0);
-        String userid = userdata.get(1);
-        if (!type.equals(null)) {
-            User newUser = new User();
-            newUser.createUser(user, type, userid);
-            session.setAttribute("user", newUser);
-        }
         String redirect;
-        if (type.equals("finance")) {
-            redirect = "/Finance.jsp";
-        } else if (type.equals("staff")) {
-            redirect = "/Staff.jsp";
-        } else if (type.equals("doctor")) {
-            redirect = "/index.jsp";
+        if (userdata != null) {
+            String type = userdata.get(0);
+            String userid = userdata.get(1);
+            if (!type.equals(null)) {
+                User newUser = new User();
+                newUser.createUser(user, type, userid);
+                session.setAttribute("user", newUser);
+            }
+            if (type.equals("finance")) {
+                redirect = "/Finance.jsp";
+            } else if (type.equals("staff")) {
+                redirect = "/Staff.jsp";
+            } else if (type.equals("doctor")) {
+                redirect = "/index.jsp";
+            } else {
+                redirect = "/index.jsp";
+            }
         } else {
             redirect = "/index.jsp";
         }

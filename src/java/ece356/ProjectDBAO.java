@@ -58,7 +58,7 @@ public class ProjectDBAO {
             char c = pwd.charAt(i);
             asciiSum += (int) c;
         }
-        if (asciiSum == resultSet.getInt(password)) {
+        if (asciiSum == resultSet.getInt("password")) {
             return userdata;
         }
         return null;

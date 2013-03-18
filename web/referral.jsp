@@ -42,7 +42,6 @@
                 </select><br/>
                 Refer to Doctor:
                 <select name="doctorID">
-                    <option value="0"> N/A </option>
                     <%!ArrayList<String> doctorList;%>
                     <%
                         doctorList = ProjectDBAO.getDoctors();
