@@ -368,13 +368,13 @@ public class ProjectDBAO {
             if (lastName.length() != 0) {
                 query += " AND lastName = ?";
             }
-            if (operation.length() != 0 && !noTreatments) {
+            if (operation.length() != 0) {
                 query += " AND operation LIKE ?";
             }
-            if (referralID != -1 && !noTreatments) {
+            if (referralID != -1) {
                 query += " AND referralID = ?";
             }
-            if (prescription.length() != 0 && !noTreatments) {
+            if (prescription.length() != 0) {
                 query += " AND drug LIKE ?";
             }
 
@@ -402,13 +402,13 @@ public class ProjectDBAO {
             if (lastName.length() != 0) {
                 pstmt.setString(++num, lastName);
             }
-            if (operation.length() != 0 && !noTreatments) {
+            if (operation.length() != 0) {
                 pstmt.setString(++num, "%" + operation + "%");
             }
-            if (referralID != -1 && !noTreatments) {
+            if (referralID != -1 ) {
                 pstmt.setInt(++num, referralID);
             }
-            if (prescription.length() != 0 && !noTreatments) {
+            if (prescription.length() != 0 ) {
                 pstmt.setString(++num, "%" + prescription + "%");
             }
 

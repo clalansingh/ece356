@@ -40,19 +40,31 @@ public class DoctorsQueries extends HttpServlet {
         
         String strQueryNum = request.getParameter("qnum");
         int intQueryNum = Integer.parseInt(strQueryNum);
-        
+ 
+        boolean inputError = false;
         if(intQueryNum == 1) {
-            try {
+            try {  
                 createVisitationRecordHelper(request, response);
-                url = "/Doctor.jsp";
+                url = "/Doctor.jsp"; 
+                              
             } catch (Exception e) {
                 request.setAttribute("exception", e);
                 url = "/fancyError.jsp";
             }       
         } else if(intQueryNum == 2) {
             try {
-                searchRecordsHelper(request, response);
-                url = "/doctorSearchListView.jsp";
+               if(request.getParameter("treatmentType").equals("referralID")) {
+                   try{
+                       Integer.parseInt(request.getParameter("treatment"));
+                   }catch(NumberFormatException e) {
+                       url = "/invalidInput.jsp";
+                       inputError = true;
+                   }
+                }
+                if(!inputError) {
+                    searchRecordsHelper(request, response);
+                    url = "/doctorSearchListView.jsp";
+                }                                
             } catch (Exception e) {
                 request.setAttribute("exception", e);
                 url = "/fancyError.jsp";
