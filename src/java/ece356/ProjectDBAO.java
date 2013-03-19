@@ -354,7 +354,7 @@ public class ProjectDBAO {
                 query += " AND visitDate = ?";
             }
             if (length != -1) {
-                query += " AND length = ?";
+                query += " AND v.length = ?";
             }
             if (diagnosis.length() != 0) {
                 query += " AND diagnosis LIKE ?";
