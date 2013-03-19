@@ -126,7 +126,7 @@ public class DoctorsQueries extends HttpServlet {
             searchType = 1;
             operation += request.getParameter("treatment");
         } else {
-            searchType = 1;
+            searchType = 2;
             String strReferralID = request.getParameter("treatment");
             referralID = Integer.parseInt(strReferralID);
         }

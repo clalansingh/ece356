@@ -331,7 +331,7 @@ public class ProjectDBAO {
                 query += " AND operation LIKE ?";
             }
             if (referralID != -1) {
-                query += " AND referralID LIKE ?";
+                query += " AND referralID = ?";
             }
             if (prescription.length() != 0) {
                 query += " AND drug LIKE ?";
