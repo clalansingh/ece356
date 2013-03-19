@@ -4,6 +4,7 @@
     Author     : Leon Zhang
 --%>
 
+<%@page import="java.util.ArrayList"%>
 <%@page import="ece356.ProjectDBAO"%>
 <%@page import="ece356.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>

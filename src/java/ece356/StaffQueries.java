@@ -43,6 +43,7 @@ public class StaffQueries extends HttpServlet {
             //add patient
             if (intQueryNum == 1) {
                 url = "/createPatientSuccess.jsp";
+                boolean failure = false;
                 String firstName = request.getParameter("firstName");
                 String lastName = request.getParameter("lastName");
                 String health_card = request.getParameter("health_card");
@@ -51,10 +52,32 @@ public class StaffQueries extends HttpServlet {
                 String phone = request.getParameter("phone");
                 String doctorID = request.getParameter("doctorID");
                 int num = 0;
-                if ((!firstName.equals("")) && (!lastName.equals("")) && (!health_card.equals("")) && (!SIN.equals("")) && 
+                if (!health_card.equals("")) {
+                    try {
+                        if (Integer.parseInt(health_card) > 2147483647) {
+                            url = "/invalidHealthCard.jsp";
+                            failure = true;
+                        }
+                    } catch (NumberFormatException e) {
+                        url = "/invalidHealthCard.jsp";
+                        failure = true;
+                    }
+                }
+                if (!SIN.equals("")) {
+                    try {
+                        if (Integer.parseInt(SIN) > 2147483647) {
+                            url = "/invalidSIN.jsp";
+                            failure = true;
+                        }
+                    } catch (NumberFormatException e) {
+                        url = "/invalidSIN.jsp";
+                        failure = true;
+                    }
+                }
+                if ((!failure) &&(!firstName.equals("")) && (!lastName.equals("")) && (!health_card.equals("")) && (!SIN.equals("")) && 
                         (!address.equals("")) && (!phone.equals(""))) {
                     num = ProjectDBAO.insertPatient(firstName, lastName, health_card, SIN, address, phone, doctorID);
-                } else {
+                } else if (!failure) {
                     url = "/createPatientFailure.jsp";
                 }
                 request.setAttribute("num", num);
@@ -85,6 +108,7 @@ public class StaffQueries extends HttpServlet {
                 request.setAttribute("patientID", patientID);
                 url = "/viewSelectedPatient.jsp"; 
             } else if (intQueryNum == 4) {
+                boolean failure = false;
                 url = "/updatePatientSuccess.jsp";
                 String patientID = request.getParameter("patientID");
                 String firstName = request.getParameter("firstName");
@@ -93,7 +117,31 @@ public class StaffQueries extends HttpServlet {
                 String SIN = request.getParameter("SIN");
                 String address = request.getParameter("address");
                 String phone = request.getParameter("phone");
-                ProjectDBAO.updatePatient(patientID, firstName, lastName, health_card, SIN, address, phone);
+                if (!health_card.equals("")) {
+                    try {
+                        if (Integer.parseInt(health_card) > 2147483647) {
+                            url = "/invalidHealthCard.jsp";
+                            failure = true;
+                        }
+                    } catch (NumberFormatException e) {
+                        url = "/invalidHealthCard.jsp";
+                        failure = true;
+                    }
+                }
+                if (!SIN.equals("")) {
+                    try {
+                        if (Integer.parseInt(SIN) > 2147483647) {
+                            url = "/invalidSIN.jsp";
+                            failure = true;
+                        }
+                    } catch (NumberFormatException e) {
+                        url = "/invalidSIN.jsp";
+                        failure = true;
+                    }
+                }
+                if (!failure) {
+                    ProjectDBAO.updatePatient(patientID, firstName, lastName, health_card, SIN, address, phone);
+                }
             } else if (intQueryNum == 5) {
                 url = "/patientReferralSuccess.jsp";
                 String patientID = request.getParameter("patientID");
