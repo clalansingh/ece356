@@ -454,11 +454,9 @@ public class ProjectDBAO {
             con = getConnection();
 
             /* Build SQL query */
-            String query = "SELECT * FROM Visits natural join Patients WHERE TRUE";
+            String query = "SELECT * FROM Visits v,Patients p WHERE TRUE AND v.patientID = ? and v.patientID = p.patientID"+ 
+                    " ORDER BY visitDate";
 
-            query += " AND patientID = ?";
-
-            query += " ORDER BY visitDate";
             pstmt = con.prepareStatement(query);
 
             pstmt.setInt(1, patientID);

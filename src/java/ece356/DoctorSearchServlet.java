@@ -46,13 +46,15 @@ public class DoctorSearchServlet extends HttpServlet {
         String patientID = splitRecords[0];
         String date = splitRecords[1];
         int length = 0;
-        for(String s: searchResults) {
-            String[] sRecord = s.split("#");
-            String sPatientID = sRecord[0];
-            if(patientID.equals(sPatientID)) {
-                length++;
-            }
+        ArrayList<String> lengthChecker = new ArrayList<String>();
+        try {
+            lengthChecker = ProjectDBAO.queryForDoctorSearchSorting(Integer.parseInt(patientID));            
+        } catch (Exception e) {
+            request.setAttribute("exception", e);
+            url = "/fancyError.jsp";
         }
+        length = lengthChecker.size();
+        
         
         try {
             ArrayList<String> ret = ProjectDBAO.queryForDoctorSearchSorting(Integer.parseInt(patientID));
